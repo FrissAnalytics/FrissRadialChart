@@ -1,0 +1,48 @@
+.FrissRadialChart {
+	font-size: 11px;
+	text-align: center;
+}
+
+.FrissRadialChart ul { 
+list-style: none; 
+padding: 0; 
+margin: 0; 
+display: inline-block; 
+position: absolute; 
+z-index: 100; 
+right: 0px; 
+top: 30px; }
+
+.FrissRadialChart select { 
+position: absolute; 
+right: 0px; 
+top: 924px; }
+
+.FrissRadialChart a:hover { c
+olor: #ADDD8E; 
+text-decoration: underline; }
+	
+.FrissRadialChart h1 { 
+font-size: 32px;
+ margin-bottom: 0;}	
+ 
+.FrissRadialChart h2 { 
+font-size: 18px; 
+margin-top: 0;
+ margin-bottom: 0; }
+ 
+.FrissRadialChart h4 { 
+margin: 0 auto; 
+font-weight: normal; 
+width: 500px; }
+
+.FrissRadialChart li { text-align: left; }
+
+.FrissRadialChart li span { 
+width: 50px; 
+display: inline-block; 
+text-align: right;
+margin-right: 5px; }
+
+.FrissRadialChart { width: 100%; }
+
