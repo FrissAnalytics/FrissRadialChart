@@ -2,6 +2,12 @@ shinyServer(function(input, output, session) {
   
   RV <- reactiveValues(Data = RadialData)
 
+  observeEvent(input$UpdateData,{
+    if(input$UpdateData == 0) return()
+    SelectedRows <- sample(1:nrow(RadialData))[1:20]
+    RV$Data <- RadialData[SelectedRows,]
+  })
+  
   output$Agent <- renderUI({
     selectInput("SelectAgent", "select agent", choices = RadialData$gem, width = "200px")
   })
@@ -46,4 +52,9 @@ shinyServer(function(input, output, session) {
     session$sendCustomMessage(type = "myCallbackHandler3", input$Collapse)
   })
 
+  observeEvent(input$Reset,{
+    if(input$Reset == 0) return()
+    session$sendCustomMessage(type = "myCallbackHandler4", input$Reset)
+  })
+  
 })

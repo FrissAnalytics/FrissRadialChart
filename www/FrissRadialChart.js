@@ -21,6 +21,8 @@
   // minimum of width and height
   var Min = d3.min([Width,Height]);   
     
+  d3.select(el).select("*").remove();
+  
   //////////
   // DATA //
   //////////
@@ -181,14 +183,23 @@
     d3.selectAll(".city")
       .transition()
       .duration(1300)
-      .attr("cy", 0)
       .attr("cx", 0)
       .style("opacity",0);
   }
   
+  function Reset(message){
+
+    d3.selectAll(".city")
+      .transition()
+      .duration(1300)
+      .attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
+      .style("opacity",1);
+  }
+
   Shiny.addCustomMessageHandler("myCallbackHandler1",UpdateCity);
   Shiny.addCustomMessageHandler("myCallbackHandler2",Resize);
   Shiny.addCustomMessageHandler("myCallbackHandler3",Collapse);
+  Shiny.addCustomMessageHandler("myCallbackHandler4",Reset);
   
   function update(){
   	d3.selectAll('.city')
