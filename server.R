@@ -2,6 +2,10 @@ shinyServer(function(input, output, session) {
   
   RV <- reactiveValues(Data = RadialData)
 
+  output$Agent <- renderUI({
+    selectInput("SelectAgent", "select agent", choices = RadialData$gem, width = "200px")
+  })
+  
   # chart
   output$Chart1 <- renderFrissRadialChart({ 
     return(RV$Data)
@@ -10,15 +14,26 @@ shinyServer(function(input, output, session) {
   # observe selected index Radial Chart on circle click
   observeEvent(input$Index,{
     cat("\nSelected index:", input$Index)
+    
+    SelectedAgent <- RadialData$gem[input$Index+1]
+    updateSelectInput(session,inputId = "SelectAgent",selected = SelectedAgent)
   })
   
   ###
   ### send custom messages
   ###
   
-  observeEvent(input$SelectAgent,{
+  observe({
     if(is.null(input$SelectAgent)) return()
-    session$sendCustomMessage(type = "myCallbackHandler1", input$SelectAgent)
+    
+    mIndex <- which(RV$Data$gem == input$SelectAgent)
+    
+    cat("\nselected agent",input$SelectAgent,"index",mIndex)
+    
+    # zero based for d3
+    mIndex <- mIndex - 1
+
+    session$sendCustomMessage(type = "myCallbackHandler1", mIndex)
   })
   
   observeEvent(input$Size,{

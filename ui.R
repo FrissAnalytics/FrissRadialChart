@@ -6,9 +6,9 @@ shinyUI(
     
     fluidRow(
       column(2,
-        actionButton("Collapse",label = "Collapse"),
-        actionButton("SelectAgent",label = "Agent"),
-        selectInput("Size", "Size", choices = c("Similarity","Size"), width = "200px")
+        uiOutput("Agent"),
+        selectInput("Size", "size", choices = c("Similarity","Size"), width = "200px"),
+        actionButton("Collapse",label = "collapse")
       ),
       column(10,
         FrissRadialChartOutput("Chart1",width="100%", height="950px")

@@ -1,9 +1,10 @@
 rm(list = ls())
+library(jsonlite)
 
 source("FrissRadialChart.R")
 
 # data
 load("RadialData.RData")
 
-# update data
-RadialData$gem <- paste("Agent",1:nrow(RadialData),sep="_")
+# add agent id 
+RadialData$gem <- paste("Agent",sprintf("%02d",1:nrow(RadialData)),sep="_")

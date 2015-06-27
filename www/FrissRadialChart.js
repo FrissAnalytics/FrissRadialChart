@@ -60,6 +60,8 @@
 	];
 
 	var rfunc  = rfuncs[1];
+	var layout = "geo";
+	var size   = "sim";
 
 	//set canvas on which to draw D3 visualization
 	var svg = d3.select(el).append("svg") 
@@ -142,6 +144,8 @@
       .duration(800)
       .attr('r', rfunc);
     });
+    
+    size = "pop";
   }
 
   // helper function
@@ -155,6 +159,8 @@
 				.duration(800)
 				.attr('r', rfunc);
 		});
+		
+		size = "sim";
   }			
 			
 			
@@ -229,8 +235,9 @@
 
   })
 	.on("mouseover", function(d, i) {
-
-		var labelbackground = d3.select(this.parentNode)
+	  
+	  
+	  		var labelbackground = d3.select(this.parentNode)
 			.append('text')
 			.attr('class', 'label')
 			.style('text-anchor', 'middle')
@@ -243,7 +250,7 @@
 			.style('stroke-opacity', 0.6)
 			.style('filter', 'url:(#dropshadow)')
 			.attr('dy', function() { return size == "pop" ? -1 * rinw(Math.sqrt(d.inw / Math.PI)) - 5 : -1 * rr(Math.sqrt(d['chi'][index] / Math.PI) == 0 ? 1 : Math.sqrt(d['chi'][index] / Math.PI)) - 5; })
-			.style('fill', 'none');
+			.style('fill', 'none')
 
 		var labelforeground = d3.select(this.parentNode)
 			.append('text')
@@ -254,8 +261,17 @@
 			.style('font-size', '16px')
 			.style('font-weight', 'bold')
 			.attr('dy', function() { return size == "pop" ? -1 * rinw(Math.sqrt(d.inw / Math.PI)) - 5 : -1 * rr(Math.sqrt(d['chi'][index] / Math.PI) == 0 ? 1 : Math.sqrt(d['chi'][index] / Math.PI)) - 5; })
-			.style('fill', '#000');
+			.style('fill', '#000')
 
+		if (layout == "geo") {
+			labelbackground
+				.attr('y', function() { return merc([d['geo'][1], d['geo'][0]])[1]; })
+  	ge			.attr('x', function() { return merc([d['geo'][1], d['geo'][0]])[0]; })
+
+  			labelforeground
+				.attr('y', function() { return merc([d['geo'][1], d['geo'][0]])[1]; })
+  				.attr('x', function() { return merc([d['geo'][1], d['geo'][0]])[0]; })
+		} else {
 			labelbackground
 				.attr('x', function() { return index == i ? 0 : Math.cos(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
 				.attr('y', function() { return index == i ? 0 : Math.sin(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
@@ -263,7 +279,18 @@
 			labelforeground
 				.attr('x', function() { return index == i ? 0 : Math.cos(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
 				.attr('y', function() { return index == i ? 0 : Math.sin(d.s/data.length * 2 * Math.PI) * rs(d['chi'][index] == 0 ? 1 : d['chi'][index]); })
-		
+		}
+
+		bg.selectAll(".marker")
+			.data(data[d.s]["stm"])
+			.enter().append("line")
+			.attr("class", "marker")
+			.attr("x1", function(d) { return 5 + bs(d); })
+			.attr("y1", function(d, i) { return i * 11; })
+			.attr("x2", function(d) { return 5 + bs(d); })
+			.attr("y2", function(d, i) { return 10 + i * 11; })
+			.style("stroke", "#000")
+			.style("opacity", 0.8)
 
 		bg.selectAll(".marker")
 			.data(data[d.s]["stm"])
@@ -277,25 +304,28 @@
 			.style("opacity", 0.8);
 	})
 	.on("mouseout", function(d, i) {
-		d3.selectAll('.label').remove();
-		d3.selectAll(".marker").remove();
+		d3.selectAll('.label')
+			.remove()
+
+		d3.selectAll(".marker")
+			.remove()
 	});
 
 	var bs = d3.scale.linear().domain([0, 100]).range([0, 200]);
 
 	var bg = svg.append("g")
-		.attr("transform", "translate(50, 50)");
+		.attr("transform", "translate(50, 50)")
     
 	//text in front of bars on top left hand side 
 	var party = bg.selectAll(".party")
-		.data(VariableNames)
+		.data(["var 1", "var 2", "var 3", "var 4", "var 5", "var 6", "var 7", "var 8", "var 9", "var 10", "var 11"])
 		.enter().append("text")
 		.attr("class", "party")
 		.attr("x",-50)
 		.attr("y", function(d, i) { return 8 + i * 11; })
 		.text(String)
 		.style("fill", "#91B6D4")
-		.style("text-anchor", "right-align");
+		.style("text-anchor", "right-align")
 
 	//bars in left top cir
 	var bar = bg.selectAll("rect")
@@ -305,23 +335,28 @@
 		.attr("y", function(d, i) { return i * 11; })
 		.attr("height", 10)
 		.attr("width", function(d) { return bs(d); })
-		.style("fill", "#C0CCD5");
+		.style("fill", "#C0CCD5")
+   
+   
+   // radial layout
+			layout = "radial";
 
-    d3.selectAll(".city")
-      .transition()
-      .duration(1300)
-      .attr("cy", 0)
-      .attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
-      .attr("transform", function(d, i) { return "rotate(" + d.s/data.length * 360 + " 0 0)"; });
-    
-    d3.selectAll("#axisgroup")
-      .transition()
-      .duration(1300)
-      .style("opacity", 1);
-    
-    d3.select(this).attr("class", "selected");
- 
-	  update();
+			d3.selectAll(".city")
+				.transition()
+				.duration(1300)
+				.attr("cy", 0)
+  				.attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
+  				.attr("transform", function(d, i) { return "rotate(" + d.s/data.length * 360 + " 0 0)"; })
+
+			d3.selectAll("#axisgroup")
+  				.transition()
+  				.duration(1300)
+  				.style("opacity", 1)
+
+			d3.select(this)
+			.attr("class", "selected")
+
+      update();
   };
     
   Shiny.outputBindings.register(binding, "FrissRadialChartOutputBinding");
