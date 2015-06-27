@@ -1,15 +1,9 @@
 shinyServer(function(input, output, session) {
-  
+
   RV <- reactiveValues(Data = RadialData)
 
-  observeEvent(input$UpdateData,{
-    if(input$UpdateData == 0) return()
-    SelectedRows <- sample(1:nrow(RadialData))[1:20]
-    RV$Data <- RadialData[SelectedRows,]
-  })
-  
   output$Agent <- renderUI({
-    selectInput("SelectAgent", "select agent", choices = RadialData$gem, width = "200px")
+      selectInput("SelectAgent", "select agent", choices = RadialData$gem, width = "200px")
   })
   
   # chart
