@@ -1,6 +1,6 @@
 (function() {
 
-  // see also http://192.168.41.209/~friss/DemoD3Radial/D3RadialDemo.html
+   // see also http://192.168.41.209/~friss/DemoD3Radial/D3RadialDemo.html
   var binding = new Shiny.OutputBinding();
       
   binding.find = function(scope){return $(scope).find(".FrissRadialChart");};
@@ -191,39 +191,18 @@
   }			
 			
 			
-  function UpdateCity(ShinyIndex){
+  function City(ShinyIndex){
     index = ShinyIndex;
 		update();
   }
   
-  function Resize(message){
+  function Size(message){
     if(message == "Similarity") sizeBySimilarity();
     if(message == "Size") sizeByPopulation();
   }
   
-  function Collapse(message){
-
-    d3.select(el).selectAll(".city")
-      .transition()
-      .duration(1300)
-      .attr("cx",0)
-      .style("opacity", 0);
-  }
-  
-  function Reset(message){
-
-    d3.select(el).selectAll(".city")
-      .transition()
-      .duration(1300)
-      .delay(function(d,i){return i * 3})
-      .attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
-      .style("opacity",1);
-  }
-
-  Shiny.addCustomMessageHandler("myCallbackHandler1",UpdateCity);
-  Shiny.addCustomMessageHandler("myCallbackHandler2",Resize);
-  Shiny.addCustomMessageHandler("myCallbackHandler3",Collapse);
-  Shiny.addCustomMessageHandler("myCallbackHandler4",Reset);
+  Shiny.addCustomMessageHandler(ChartID + "_callbackCity",City);
+  Shiny.addCustomMessageHandler(ChartID + "_callbackSize",Size);
   
   function update(){
   	d3.select(el).selectAll('.city')
@@ -268,7 +247,7 @@
       index = ind;
       
       // indicate to selected city to shiny
-      Shiny.onInputChange("Index", index);
+      Shiny.onInputChange(ChartID + "_index", index);
 
       update();
 
