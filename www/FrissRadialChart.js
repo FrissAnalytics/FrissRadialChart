@@ -11,7 +11,6 @@
   var data = L.Data;
   var options = L.Options;
   
-  
   // get element     
   var $el = $(el);
   
@@ -56,10 +55,14 @@
   var CircleGuideStroke      = options.circleGuideStroke;
   var CircleGuideOpacity     = options.circleGuideOpacity;
   var CircleGuideStrokeWidth = options.circleGuideStrokeWidth;
-
+  
+  var CircleColorDomain      = options.CircleColorDomain;
+  var SelectedAgentTextColor = options.SelectedAgentTextColor;
+  var SelectedAgentFontSize  = options.SelectedAgentFontSize;
+  
   // color circles with high similarity (low distance from center) 
   // medium similarity (medium distance from center), low similarity (high distance from center)
-  var CircleColorArray = ["#ADDD8E", "#41415F", "#193244"];
+  var CircleColorArray = options.CircleColorArray;
   
 	//axis used during radial layout
 	var axes = [
@@ -91,8 +94,8 @@
 	var rinw = d3.scale.linear().domain(d3.extent(data, function(x) { return Math.sqrt(x.inw / Math.PI); })).range([2, 40]);
 	
 	// circle color scale
-	var c    = d3.scale.log().domain([1, 20, 74]).range(CircleColorArray);
-
+	var c    = d3.scale.log().domain(CircleColorDomain).range(CircleColorArray);
+ 
 	var rfuncs = [
 		function(d, i) { return rinw(Math.sqrt(d.inw / Math.PI)); }, // population
 		function(d, i) { return rr(Math.sqrt(d['chi'][index] / Math.PI) == 0 ? 1 : Math.sqrt(d['chi'][index] / Math.PI)); }, // similarity
@@ -113,10 +116,10 @@
 		.attr("x", 54)
 		.attr("y", 30)
 		.text(data[index]["gem"])
-		.style("fill", "#000")
+		.style("fill", SelectedAgentTextColor) 
 		.style("text-anchor", "start")
 		.style("font-family", "Quicksand")
-		.style("font-size", "24px");
+		.style("font-size", SelectedAgentFontSize);
 
 	var g = svg.append('g').attr('transform', 'translate(' + w / 2 + ', ' + h / 2 + ')');
     

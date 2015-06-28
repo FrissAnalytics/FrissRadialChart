@@ -10,16 +10,16 @@ margin: 0;
 display: inline-block; 
 position: absolute; 
 z-index: 100; 
-right: 0px; 
+right: 0; 
 top: 30px; }
 
 .FrissRadialChart select { 
 position: absolute; 
-right: 0px; 
+right: 0; 
 top: 924px; }
 
-.FrissRadialChart a:hover { c
-olor: #ADDD8E; 
+.FrissRadialChart a:hover { 
+color: #ADDD8E; 
 text-decoration: underline; }
 	
 .FrissRadialChart h1 { 

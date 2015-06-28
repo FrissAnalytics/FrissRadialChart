@@ -1,0 +1,11 @@
+.FrissDark{
+	background-color: black;  
+	border-radius: 8px; 
+	color: white; 
+	margin: 0 200px;
+}
+
+.FrissTitle{
+	font-size:400%;
+	text-align:center;
+}

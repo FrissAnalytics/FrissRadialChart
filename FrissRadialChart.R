@@ -38,7 +38,12 @@ renderFrissRadialChart <- function(expr, env=parent.frame(), quoted=FALSE) {
                     circleGuideFill        = "none",
                     circleGuideStroke      = "#91B6D4",
                     circleGuideOpacity     = 0.6,
-                    circleGuideStrokeWidth = "1px")
+                    circleGuideStrokeWidth = "1px",
+                    CircleColorArray       = c("#ADDD8E", "#41415F", "#193244"),
+                    CircleColorDomain      = c(1, 20, 74),
+                    SelectedAgentTextColor = "#000", 
+                    SelectedAgentFontSize  = "24px"
+                  )
 
     Missing <- setdiff(names(Default),names(Options))
     
