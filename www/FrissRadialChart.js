@@ -5,8 +5,13 @@
       
   binding.find = function(scope){return $(scope).find(".FrissRadialChart");};
   
-  binding.renderValue = function(el, data) {
-    
+  binding.renderValue = function(el, L) {
+
+  // retieve data objects passed by Shiny
+  var data = L.Data;
+  var options = L.Options;
+  
+  
   // get element     
   var $el = $(el);
   
@@ -31,25 +36,26 @@
   // DATA //
   //////////
 
-  var CentralCircleColor = 'red';
-
-  var VariableNames  = ["variable 1", "variable 2", "variable 3", "variable 4", "variable 5", "variable 6", "variable 7", "variable 8", "variable 9", "variable 10", "variable 11"];
+  var VariableNames  = ["variable 1", "variable 2", "variable 3", "variable 4", 
+                        "variable 5", "variable 6", "variable 7", "variable 8", 
+                        "variable 9", "variable 10", "variable 11"];
 	
-	var NrOfVariables  = VariableNames.length;
-	  
-  var BarOffsetX     = -50;
-  var BarTextColor   = "#91B6D4";
-  var BarTextAlign   = "left-align";
-  var BarColor       = "#C0CCD5";
+	var NrOfVariables          = VariableNames.length;
+	       
+	var CentralCircleColor     = options.centralCircleColor;
+	         
+  var BarOffsetX             = options.barOffsetX;  
+  var BarTextColor           = options.barTextColor;
+  var BarTextAlign           = options.barTextAlign;
+  var BarColor               = options.barColor;    
   
-  var CircleGuideTextColor = "#91B6D4";
-  var CircleGuideTextSize = "11px";
-  var CircleGuideOffset = "40%";
-  
-  var CircleGuideFill = "none";
-  var CircleGuideStroke  = "#91B6D4";
-  var CircleGuideOpacity = 0.6;
-  var CircleGuideStrokeWidth = "1px";
+  var CircleGuideTextColor   = options.circleGuideTextColor;
+  var CircleGuideTextSize    = options.circleGuideTextSize;
+  var CircleGuideOffset      = options.circleGuideOffset;
+  var CircleGuideFill        = options.circleGuideFill;
+  var CircleGuideStroke      = options.circleGuideStroke;
+  var CircleGuideOpacity     = options.circleGuideOpacity;
+  var CircleGuideStrokeWidth = options.circleGuideStrokeWidth;
 
   // color circles with high similarity (low distance from center) 
   // medium similarity (medium distance from center), low similarity (high distance from center)
@@ -64,8 +70,8 @@
 		{ 'label': 'extremely  different' , 'value': 75 } 
 	];
 
-	//select a city to start visualization
-	var index =  0,
+	//select agent to initialize visualization
+	var index = options.selectedAgent - 1,
 	
 	//canvas width and height
 	w = Min, 
@@ -190,9 +196,8 @@
 		size = "sim";
   }			
 			
-			
-  function City(ShinyIndex){
-    index = ShinyIndex;
+  function City(message){
+    index = message;
 		update();
   }
   
@@ -365,7 +370,7 @@
 			.transition()
 			.duration(1300)
 			.style("opacity", 1);
-
+			
   };
     
   Shiny.outputBindings.register(binding, "FrissRadialChartOutputBinding");

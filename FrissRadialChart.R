@@ -22,9 +22,34 @@ renderFrissRadialChart <- function(expr, env=parent.frame(), quoted=FALSE) {
   installExprFunction(expr, "func", env, quoted)
 
   function() {
-    Data <- func()
+    L       <- func()
+    Data    <- toJSON(L$Data)
+    Options <- L$Options
 
-    return(toJSON(Data))
+    Default <- list(selectedAgent          = 1, 
+                    centralCircleColor     = "red",
+                    barOffsetX             = -50,
+                    barTextColor           = "#91B6D4",
+                    barTextAlign           = "left-align",
+                    barColor               = "#C0CCD5",
+                    circleGuideTextColor   = "#91B6D4",
+                    circleGuideTextSize    = "11px",
+                    circleGuideOffset      = "40%",
+                    circleGuideFill        = "none",
+                    circleGuideStroke      = "#91B6D4",
+                    circleGuideOpacity     = 0.6,
+                    circleGuideStrokeWidth = "1px")
+
+    Missing <- setdiff(names(Default),names(Options))
+    
+    if(length(Missing) > 0){
+      
+      m <- match(Missing,names(Default))
+      
+      Options <- c(Options,Default[m])
+    }
+
+    return(list(Data = toJSON(L$Data), Options = Options))
   }
 }
   

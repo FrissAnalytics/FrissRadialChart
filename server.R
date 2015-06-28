@@ -4,12 +4,27 @@ shinyServer(function(input, output, session) {
 
   # chart 1
   output$Chart1 <- renderFrissRadialChart({ 
-    return(RV$Data)
+    list(Data = RV$Data, Options = list(selectedAgent = 1))
   })
   
   # chart 2
   output$Chart2 <- renderFrissRadialChart({ 
-    return(RV$Data)
+    
+    Options = list(selectedAgent          = 61, 
+                   centralCircleColor     = "purple",
+                   barOffsetX             = -50,
+                   barTextColor           = "blue",
+                   barTextAlign           = "left-align",
+                   barColor               = "purple",
+                   circleGuideTextColor   = "#91B6D4",
+                   circleGuideTextSize    = "11px",
+                   circleGuideOffset      = "40%",
+                   circleGuideFill        = "gray",
+                   circleGuideStroke      = "white",
+                   circleGuideOpacity     = 0.1,
+                   circleGuideStrokeWidth = "5px")
+    
+    list(Data = RV$Data, Options = Options)
   })
 
   # agent 1 selector
@@ -49,15 +64,17 @@ shinyServer(function(input, output, session) {
   })
   
   # custom message to select size in chart 1
-  observeEvent(input$Size1,{
-    if(input$Size1 == 0) return()
-    session$sendCustomMessage(type = "Chart1_callbackSize", input$Size)
+  observe({
+    if(is.null(input$Size1)) return()
+    cat("\nSize 1",input$Size1)
+    session$sendCustomMessage(type = "Chart1_callbackSize", input$Size1)
   })
   
   # custom message to select size in chart 2
-  observeEvent(input$Size2,{
-    if(input$Size2 == 0) return()
-    session$sendCustomMessage(type = "Chart2_callbackSize", input$Size)
+  observe({
+    if(is.null(input$Size2)) return()
+    cat("\nSize 2",input$Size2)
+    session$sendCustomMessage(type = "Chart2_callbackSize", input$Size2)
   })
 
   
