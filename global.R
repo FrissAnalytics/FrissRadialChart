@@ -11,7 +11,7 @@ FrissHeader <- list(
   singleton(includeScript("www/underscore.js")),
   singleton(includeScript("www/jquery-ui.js")),
   singleton(includeScript("www/style.js")),
-  singleton(includeCSS("www/App.css"))
+  singleton(includeCSS("www/app.css"))
 )
 
 source("FrissRadialChart.R")
