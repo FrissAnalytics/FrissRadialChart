@@ -11,6 +11,11 @@ shinyServer(function(input, output, session) {
     return(RV$Data)
   })
   
+  # chart
+  output$Chart2 <- renderFrissRadialChart({ 
+    return(RV$Data)
+  })
+  
   # observe selected index Radial Chart on circle click
   observeEvent(input$Index,{
     cat("\nSelected index:", input$Index)

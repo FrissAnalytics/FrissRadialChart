@@ -1,5 +1,6 @@
 (function() {
 
+  // see also http://192.168.41.209/~friss/DemoD3Radial/D3RadialDemo.html
   var binding = new Shiny.OutputBinding();
       
   binding.find = function(scope){return $(scope).find(".FrissRadialChart");};
@@ -12,6 +13,8 @@
   // div chart id created by Shiny    
   var ChartID = el.id;
   
+  console.log("my chart id:", ChartID);
+  
    // determine element width 
   var Width = $(el).width();
 
@@ -20,11 +23,14 @@
   
   // minimum of width and height
   var Min = d3.min([Width,Height]);   
+
+  // remove previous graph
+  d3.select(el).selectAll("*").remove();
     
   //////////
   // DATA //
   //////////
-  
+
   var CentralCircleColor = 'red';
 
   var VariableNames  = ["variable 1", "variable 2", "variable 3", "variable 4", "variable 5", "variable 6", "variable 7", "variable 8", "variable 9", "variable 10", "variable 11"];
@@ -66,17 +72,24 @@
 	h = Min;
 	
 	//scales used to adjust data points during visualization
+	
+	// circle guide scale
 	var rl   = d3.scale.linear().domain([0, 75]).range([0, w / 2 - 60]);
+	
 	var rs   = d3.scale.log().domain([1, 74]).range([0, w / 2 - 60]);
+	
+	// circle radius scale when based on similarity
 	var rr   = d3.scale.linear().domain([Math.sqrt(1 / Math.PI), Math.sqrt(15 / Math.PI), Math.sqrt(74 / Math.PI)]).range([22, 5, 2]);
+	
+	// circle radius scale when based on population
 	var rinw = d3.scale.linear().domain(d3.extent(data, function(x) { return Math.sqrt(x.inw / Math.PI); })).range([2, 40]);
-	var ro   = d3.scale.linear().domain(d3.extent(data, function(x) { return x.opk; })).range([2, 70]);
+	
+	// circle color scale
 	var c    = d3.scale.log().domain([1, 20, 74]).range(CircleColorArray);
 
 	var rfuncs = [
 		function(d, i) { return rinw(Math.sqrt(d.inw / Math.PI)); }, // population
 		function(d, i) { return rr(Math.sqrt(d['chi'][index] / Math.PI) == 0 ? 1 : Math.sqrt(d['chi'][index] / Math.PI)); }, // similarity
-		function(d, i) { return ro(d.opk); } // show up
 	];
 
 	var rfunc  = rfuncs[1];
@@ -90,7 +103,7 @@
 
   //left hand side text indicating which city is selected
 	var selectedCity = svg.append("text")
-		.attr("id", "selectedcity")
+		.attr("id", ChartID + "_selectedcity")
 		.attr("x", 54)
 		.attr("y", 30)
 		.text(data[index]["gem"])
@@ -108,7 +121,7 @@
 		.endAngle(2 * Math.PI);
 
 	var ga = g.append("g")
-      		  .attr("id", "axisgroup")
+      		  .attr("id", ChartID + "_axisgroup")
       		  .style("opacity", 0);
 
 	ga.selectAll(".axispath")
@@ -190,18 +203,19 @@
   
   function Collapse(message){
 
-    d3.selectAll(".city")
+    d3.select(el).selectAll(".city")
       .transition()
       .duration(1300)
-      .attr("cx", 0)
-      .style("opacity",0);
+      .attr("cx",0)
+      .style("opacity", 0);
   }
   
   function Reset(message){
 
-    d3.selectAll(".city")
+    d3.select(el).selectAll(".city")
       .transition()
       .duration(1300)
+      .delay(function(d,i){return i * 3})
       .attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
       .style("opacity",1);
   }
@@ -212,19 +226,23 @@
   Shiny.addCustomMessageHandler("myCallbackHandler4",Reset);
   
   function update(){
-  	d3.selectAll('.city')
+  	d3.select(el).selectAll('.city')
     	.style("opacity",1)
       .transition()
       .duration(800)
-      .attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
+      .attr("cx", function(d, i) { return rs(d.chi[index] === 0 ? 1 : d.chi[index])})
       .attr('r', rfunc)
-      .style('fill', function(d, i) { return index == d.s ? CentralCircleColor : c(d['chi'][index] == 0 ? 1 : d['chi'][index]); });	
+      .style('fill', function(d, i) { return index === d.s ? CentralCircleColor : c(d.chi[index] === 0 ? 1 : d.chi[index]); });	
       
-    d3.selectAll(".label").remove();
+    d3.select(el)
+      .selectAll(".label")
+      .remove();
 
-    d3.select("#selectedcity").text(data[index]["gem"]);
+    d3.select(el)
+      .select("#" + ChartID + "_selectedcity")
+      .text(data[index].gem);
     
-    bar.data(data[index]['stm'])
+    bar.data(data[index].stm)
        .transition()
        .duration(800)
        .attr("width", function(d) { return bs(d);});
@@ -241,7 +259,7 @@
   	.style('stroke-opacity', 0.3)
   	.style("opacity", 0.9)
     .on("click", function(d, ind) {
-    	d3.selectAll('.city').each(function(d, ind) {
+    	d3.select(el).selectAll('.city').each(function(d, ind) {
         	if (d.s == index){
         	  d3.select(this).moveToFront();
         	}
@@ -320,10 +338,10 @@
 			.style("opacity", 0.8);
 	})
 	.on("mouseout", function(d, i) {
-		d3.selectAll('.label')
+		d3.select(el).selectAll('.label')
 			.remove()
 
-		d3.selectAll(".marker")
+		d3.select(el).selectAll(".marker")
 			.remove()
 	});
 
@@ -351,29 +369,24 @@
 		.attr("y", function(d, i) { return i * NrOfVariables; })
 		.attr("height", 10)
 		.attr("width", function(d) { return bs(d); })
-		.style("fill", BarColor)
+		.style("fill", BarColor);
    
    
-  // radial layout
+  // added HSO radial layout
 	layout = "radial";
 
-	d3.selectAll(".city")
+	d3.select(el).selectAll(".city")
 		.transition()
 		.duration(1300)
 		.attr("cy", 0)
 		.attr("cx", function(d, i) { return rs(d['chi'][index] == 0 ? 1 : d['chi'][index])})
 		.attr("transform", function(d, i) { return "rotate(" + d.s/data.length * 360 + " 0 0)"; })
 
-	d3.selectAll("#axisgroup")
+	d3.select(el).select("#"+ChartID + "_axisgroup")
 			.transition()
 			.duration(1300)
-			.style("opacity", 1)
+			.style("opacity", 1);
 
-	d3.select(this)
-	.attr("class", "selected")
-
-  update();
-  
   };
     
   Shiny.outputBindings.register(binding, "FrissRadialChartOutputBinding");
